@@ -399,7 +399,12 @@ if ownership != "Currently Leasing":
         min_value=0.0,
         step=500.0
     )
-
+    if vehicle_equity is not None and vehicle_equity < 0:
+        st.warning(
+            f"Trading in this vehicle would leave a "
+            f"${abs(vehicle_equity):,.2f} loan payoff shortfall. "
+            "This amount is not included in the financing estimate."
+        )
 
 # Financing-specific questions.
 if ownership == "Currently Financing":
@@ -888,8 +893,10 @@ if st.button(
         7. A repair bill and first-year replacement payments
            are not equivalent total ownership costs.
 
-        8. Do not assume trade-in equity has already been
-           applied to the replacement loan.
+        8. The app calculates two separate financing scenarios:
+        one WITHOUT trade-in and one WITH estimated trade-in
+        equity applied. Clearly distinguish these scenarios.
+        Never claim trade-in was not applied to both.
 
         9. Never invent exact repair costs, resale values,
            financial savings, or lease terms.
