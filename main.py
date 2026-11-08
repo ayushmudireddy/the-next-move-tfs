@@ -33,7 +33,7 @@ with st.sidebar:
         padding: 12px 14px;
         margin-bottom: 8px;
         border-radius: 8px;
-        color: #f0f0f0 !important;
+        color: var(--text-color) !important;
         text-decoration: none !important;
         font-weight: 500;
     }
