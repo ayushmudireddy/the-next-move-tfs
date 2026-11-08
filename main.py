@@ -23,7 +23,7 @@ if css.exists():
 
 
 with st.sidebar:
-    st.title("Toyota Smart Advisor")
+    st.title("The Next Move")
     st.caption("Navigate your assessment")
 
     st.markdown("""
@@ -57,6 +57,7 @@ def format_vehicle_name(raw_name):
     """Automatically format Toyota-family vehicle names."""
 
     name = re.sub(r"\s+", " ", raw_name.strip())
+    name = re.sub(r"^(?:19|20)\d{2}\s+", "", name)
 
     if not name:
         return ""
@@ -169,8 +170,9 @@ def find_first_year(vehicle_name):
 # TITLE AND VEHICLE INPUT
 # --------------------------------------------------
 
-st.title("Welcome to the Toyota Advisor!")
-st.write("Find the smartest next move for your Toyota!")
+st.title("Welcome to The Next Move!")
+st.write("Find the smartest next move for your Toyota.")
+st.write("Your car, your money, your move!")
 
 st.header("Your Vehicle", anchor="vehicle-overview")
 
@@ -197,8 +199,7 @@ if (
         st.session_state["first_year"] = first_year
 
     except Exception as error:
-        st.warning("Vehicle lookup failed. Check Streamlit logs.")
-        print(f"Model lookup error: {error}")
+        st.error(f"Vehicle lookup error: {type(error).__name__}: {error}")
         st.session_state["first_year"] = None
 
 if vehicle_name:
@@ -638,6 +639,88 @@ if comfortable_payment > 0:
             f"This payment is ${difference:,.2f} "
             "above your preferred monthly limit."
         )
+
+
+
+# --------------------------------------------------
+# FINANCING COMPARISON: WITH VS WITHOUT TRADE-IN
+# --------------------------------------------------
+
+st.subheader("Trade-In Financing Comparison")
+
+# Calculate available trade-in equity
+trade_in_credit = 0.0
+
+if ownership == "Paid Off in Full":
+    trade_in_credit = trade_in_value
+
+elif ownership == "Currently Financing":
+    if trade_in_value > 0 and remaining_balance > 0:
+        trade_in_credit = trade_in_value - remaining_balance
+
+# Leasing does not automatically provide trade-in equity.
+
+# Loan amounts
+trade_in_credit = max(0.0, trade_in_credit)
+without_trade = loan_amount
+with_trade = max(0, loan_amount - trade_in_credit)
+
+# Reuse your existing APR and loan term
+def calculate_payment(amount):
+    if monthly_interest == 0:
+        return amount / loan_length
+
+    return (
+        amount * monthly_interest
+        / (1 - (1 + monthly_interest) ** (-loan_length))
+    )
+
+payment_without = calculate_payment(without_trade)
+payment_with = calculate_payment(with_trade)
+
+interest_without = payment_without * loan_length - without_trade
+interest_with = payment_with * loan_length - with_trade
+
+left, right = st.columns(2)
+
+with left:
+    with st.container(border=True):
+        st.markdown("#### Without Trade-In")
+        st.caption("Finance without applying your current vehicle")
+
+        st.metric("Amount Financed", f"${without_trade:,.2f}")
+        st.metric("Monthly Payment", f"${payment_without:,.2f}")
+        st.write(f"Total interest: ${interest_without:,.2f}")
+
+with right:
+    with st.container(border=True):
+        st.markdown("#### With Trade-In")
+        st.caption("Finance using estimated net trade-in equity")
+
+        st.metric("Trade-In Equity", f"${trade_in_credit:,.2f}")
+        st.metric("Amount Financed", f"${with_trade:,.2f}")
+        st.metric("Monthly Payment", f"${payment_with:,.2f}")
+        st.write(f"Total interest: ${interest_with:,.2f}")
+
+if trade_in_credit > 0:
+    savings = payment_without - payment_with
+    st.success(
+        f"Applying your trade-in equity could lower your "
+        f"monthly payment by ${savings:,.2f}."
+    )
+
+if ownership == "Currently Financing" and remaining_balance == 0:
+    st.caption(
+        "Enter your loan payoff to calculate financed-vehicle "
+        "trade-in equity accurately."
+    )
+
+st.caption(
+    "Estimates exclude taxes, fees, insurance, and registration. "
+    "Trade-in credit is hypothetical and subject to appraisal, "
+    "payoff verification, and lender approval."
+)
+
 st.subheader("Your Financial Options")
 
 if repair_cost is not None:
@@ -664,7 +747,7 @@ if repair_cost is not None:
             st.caption("First-year payments + down payment")
 
             st.metric(
-                "First-year cash outflow",
+                "First-year cash outflow (no trade-in)",
                 f"${first_year_replace_cost:,.2f}"
             )
 
@@ -766,7 +849,10 @@ if st.button(
 
         Vehicle price: ${purchase_price:,.2f}
         Down payment: ${down_payment:,.2f}
-        Loan amount: ${loan_amount:,.2f}
+        Loan amount with trade-in: ${with_trade:,.2f}
+        Monthly payment without trade-in: ${payment_without:,.2f}
+        Monthly payment with trade-in: ${payment_with:,.2f}
+        Trade-in equity applied: ${trade_in_credit:,.2f}   
         APR: {interest}%
         Loan term: {loan_length} months
         Monthly payment: ${monthly_payment:,.2f}
@@ -812,6 +898,12 @@ if st.button(
             Clearly identify unavailable or unverified facts.
 
         11. End with exactly three personalized next steps.
+        
+        12. Always compare the monthly payment WITH and
+        WITHOUT trade-in equity when both are available.
+        Clearly explain which payment meets the user's
+        preferred monthly budget. Do not treat estimated
+        trade-in values as guaranteed offers.
 
         Use conversational language and short paragraphs.
         Keep the entire report under 300 words.
