@@ -1,0 +1,311 @@
+
+/* ==========================================
+   TOYOTA SMART ADVISOR
+   Red, White & Black Dashboard Theme
+   ========================================== */
+
+:root {
+    --toyota-red: #EB0A1E;
+    --toyota-red-hover: #C9081A;
+    --toyota-red-light: rgba(235, 10, 30, 0.08);
+}
+
+
+/* ==========================================
+   PAGE BACKGROUND & SIDE ACCENTS
+   ========================================== */
+
+/* Subtle red lighting along both sides */
+div[data-testid="stAppViewContainer"] {
+    background-image:
+        radial-gradient(
+            ellipse at 0% 45%,
+            rgba(235, 10, 30, 0.10),
+            transparent 48%
+        ),
+        radial-gradient(
+            ellipse at 100% 45%,
+            rgba(235, 10, 30, 0.10),
+            transparent 48%
+        );
+
+    background-attachment: fixed;
+}
+
+/* Make better use of the screen width */
+div[data-testid="stMainBlockContainer"] {
+    max-width: 1300px;
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+
+/* ==========================================
+   HEADER / BANNER
+   ========================================== */
+
+/* Applies if your existing header uses
+   the toyota-hero class */
+
+.toyota-hero {
+    background: linear-gradient(
+        120deg,
+        #C9081A 0%,
+        #EB0A1E 65%,
+        #FF3043 100%
+    );
+
+    padding: 38px 42px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+
+    box-shadow:
+        0 10px 28px rgba(235, 10, 30, 0.15);
+
+    border-left: 6px solid #9D0615;
+}
+
+.toyota-hero h1 {
+    color: #FFFFFF !important;
+    font-weight: 800;
+    margin: 8px 0;
+    letter-spacing: -0.5px;
+}
+
+.toyota-hero p {
+    color: #FFF2F2 !important;
+    font-size: 1.05rem;
+    margin-bottom: 0;
+}
+
+.hero-eyebrow {
+    color: #FFFFFF;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+
+/* ==========================================
+   SECTION HEADINGS
+   ========================================== */
+
+.stApp h2,
+.stApp h3 {
+    color: var(--toyota-red) !important;
+
+    border-left: 5px solid var(--toyota-red);
+    padding-left: 14px;
+
+    margin-top: 20px;
+    margin-bottom: 12px;
+
+    font-weight: 750;
+}
+
+/* Small red underline accent on main title */
+.stApp h1:not(.toyota-hero h1) {
+    letter-spacing: -0.5px;
+}
+
+
+/* ==========================================
+   INPUTS & QUESTIONNAIRE
+   ========================================== */
+
+/* Make labels more prominent */
+div[data-testid="stWidgetLabel"] p {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Rounded inputs */
+div[data-baseweb="input"],
+div[data-baseweb="select"],
+div[data-baseweb="textarea"] {
+    border-radius: 10px;
+}
+
+/* Red accents when hovering over inputs */
+div[data-baseweb="input"]:hover,
+div[data-baseweb="select"]:hover {
+    border-color: var(--toyota-red);
+}
+
+/* Smoother transitions */
+div[data-baseweb="input"],
+div[data-baseweb="select"],
+.stButton button {
+    transition: all 0.2s ease;
+}
+
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+
+/* Main AI analysis button */
+.stButton button[kind="primary"] {
+    background: linear-gradient(
+        135deg,
+        #EB0A1E,
+        #C9081A
+    ) !important;
+
+    border: 1px solid #EB0A1E !important;
+    border-radius: 12px;
+
+    color: #FFFFFF !important;
+    font-weight: 700;
+
+    padding: 0.65rem 1.5rem;
+
+    box-shadow:
+        0 4px 12px rgba(235, 10, 30, 0.18);
+}
+
+.stButton button[kind="primary"]:hover {
+    background: #B80718 !important;
+
+    box-shadow:
+        0 6px 18px rgba(235, 10, 30, 0.28);
+
+    transform: translateY(-1px);
+}
+
+/* Secondary buttons */
+.stButton button[kind="secondary"] {
+    border: 2px solid var(--toyota-red) !important;
+
+    border-radius: 12px;
+
+    color: var(--toyota-red) !important;
+
+    font-weight: 650;
+}
+
+.stButton button[kind="secondary"]:hover {
+    background-color: var(--toyota-red-light);
+
+    border-color: var(--toyota-red) !important;
+}
+
+.stButton button:disabled {
+    transform: none;
+    box-shadow: none;
+}
+
+
+/* ==========================================
+   FINANCIAL METRIC CARDS
+   ========================================== */
+
+div[data-testid="stMetric"] {
+    border: 1px solid rgba(235, 10, 30, 0.5);
+    border-top: 5px solid var(--toyota-red);
+
+    border-radius: 16px;
+    padding: 20px;
+
+    background-color: rgba(235, 10, 30, 0.025);
+
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.035);
+
+    transition: all 0.2s ease;
+}
+
+/* Hover effect for metric cards */
+div[data-testid="stMetric"]:hover {
+    border-color: var(--toyota-red);
+
+    box-shadow:
+        0 8px 22px rgba(235, 10, 30, 0.11);
+
+    transform: translateY(-2px);
+}
+
+div[data-testid="stMetricLabel"] {
+    font-weight: 600;
+}
+
+div[data-testid="stMetricValue"] {
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+
+/* ==========================================
+   EXPANDERS
+   ========================================== */
+
+div[data-testid="stExpander"] {
+    border: 1px solid rgba(235, 10, 30, 0.40);
+
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+div[data-testid="stExpander"] summary {
+    font-weight: 650;
+}
+
+div[data-testid="stExpander"] summary:hover {
+    color: var(--toyota-red);
+}
+
+
+/* ==========================================
+   SLIDERS
+   ========================================== */
+
+/* Red focus styling on sliders */
+div[data-testid="stSlider"] {
+    accent-color: var(--toyota-red);
+}
+
+
+/* ==========================================
+   SIDEBAR (ONLY IF ALREADY PRESENT)
+   ========================================== */
+
+section[data-testid="stSidebar"] {
+    border-right: 2px solid rgba(235, 10, 30, 0.65);
+}
+
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: var(--toyota-red) !important;
+}
+
+
+/* ==========================================
+   MOBILE RESPONSIVENESS
+   ========================================== */
+
+@media (max-width: 768px) {
+
+    div[data-testid="stMainBlockContainer"] {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .toyota-hero {
+        padding: 25px 22px;
+        border-radius: 14px;
+    }
+
+    .toyota-hero h1 {
+        font-size: 1.7rem;
+    }
+
+    div[data-testid="stMetric"] {
+        padding: 14px;
+    }
+
+}
+
+[data-testid="stMain"],
+[data-testid="stMain"] * {
+    opacity: 1 !important;
+}

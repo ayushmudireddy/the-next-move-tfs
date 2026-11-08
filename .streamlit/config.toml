@@ -1,0 +1,25 @@
+[theme]
+baseRadius = "large"
+buttonRadius = "large"
+showWidgetBorder = true
+
+[theme.light]
+primaryColor = "#EB0A1E"
+backgroundColor = "#F7F7F7"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#202020"
+borderColor = "#EB0A1E"
+linkColor = "#D5091C"
+redColor = "#EB0A1E"
+
+[theme.dark]
+primaryColor = "#EB0A1E"
+backgroundColor = "#101113"
+secondaryBackgroundColor = "#232427"
+textColor = "#F5F5F5"
+borderColor = "#EB0A1E"
+linkColor = "#FF6572"
+redColor = "#EB0A1E"
+
+[client]
+toolbarMode = "minimal"
