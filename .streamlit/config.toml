@@ -23,3 +23,7 @@ redColor = "#EB0A1E"
 
 [client]
 toolbarMode = "minimal"
+
+[data-testid="stHeaderActionElements"] {
+    display: none !important;
+}
