@@ -5,7 +5,6 @@ from pathlib import Path
 import streamlit as st
 from google import genai
 from google.genai import types
-from concurrent.futures import ThreadPoolExecutor
 
 # --------------------------------------------------
 # PAGE SETUP
@@ -58,8 +57,6 @@ def format_vehicle_name(raw_name):
     """Automatically format Toyota-family vehicle names."""
 
     name = re.sub(r"\s+", " ", raw_name.strip())
-
-    name = re.sub(r"^(?:19|20)\d{2}\s+", "", name)
 
     if not name:
         return ""
@@ -127,33 +124,45 @@ def ask_gemini(prompt):
 # AUTOMATIC VEHICLE YEAR LOOKUP
 # --------------------------------------------------
 
+
 @st.cache_data(ttl=86400, show_spinner=False)
 def find_first_year(vehicle_name):
-
     response = ask_gemini(f"""
-    Search for the earliest production model year
-    worldwide of this exact Toyota-family vehicle:
+    Identify this Toyota-family vehicle: {vehicle_name}
 
-    {vehicle_name}
+    Correct any spelling mistakes and capitalization.
+    Include the correct manufacturer.
+    Preserve the specific model and hybrid variant.
 
-    Distinguish special variants, such as hybrids or trims,
-    from other stock or old versions.
+    Find its earliest production model year worldwide.
 
-    Return ONLY the four-digit starting model year.
-    Return UNKNOWN if you are uncertain.
+    Respond in exactly this format:
+    MODEL: corrected vehicle name
+    YEAR: four-digit year
+
+    Use YEAR: UNKNOWN if uncertain.
     """)
 
-    answer = (response.text or "").strip()
+    answer = response.text or ""
 
-    match = re.fullmatch(
-        r"((?:18|19|20)\d{2})",
+    model = re.search(r"(?im)^MODEL:\s*(.+)$", answer)
+    year = re.search(
+        r"(?im)^YEAR:\s*((?:18|19|20)\d{2}|UNKNOWN)\s*$",
         answer
     )
 
-    if match:
-        return int(match.group(1))
+    if not model or not year:
+        raise ValueError("Unexpected Gemini response")
 
-    return None
+    corrected_name = model.group(1).strip()
+    first_year = (
+        int(year.group(1))
+        if year.group(1) != "UNKNOWN"
+        else None
+    )
+
+    return corrected_name, first_year
+
 
 
 # --------------------------------------------------
@@ -173,19 +182,29 @@ car = st.text_input(
 vehicle_name = format_vehicle_name(car)
 
 # Automatically check the first model year.
+
 if (
     vehicle_name
     and st.session_state.get("lookup_vehicle") != vehicle_name
 ):
     st.session_state["lookup_vehicle"] = vehicle_name
+    st.session_state["corrected_vehicle_name"] = vehicle_name
 
     try:
-        st.session_state["first_year"] = find_first_year(vehicle_name)
+        corrected_name, first_year = find_first_year(vehicle_name)
+
+        st.session_state["corrected_vehicle_name"] = corrected_name
+        st.session_state["first_year"] = first_year
 
     except Exception as error:
-        print(f"Model year lookup error: {error}")
+        st.warning("Vehicle lookup failed. Check Streamlit logs.")
+        print(f"Model lookup error: {error}")
         st.session_state["first_year"] = None
 
+if vehicle_name:
+    vehicle_name = st.session_state.get(
+        "corrected_vehicle_name", vehicle_name
+    )
 
 first_year = (
     st.session_state.get("first_year")
